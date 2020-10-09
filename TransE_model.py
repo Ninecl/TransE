@@ -61,7 +61,7 @@ class TransE(nn.Module):
     
     def forward(self, t_batch):
         # 设置loss值
-        loss = 0.
+        loss = torch.FloatTensor([0.0]).to(self.device)
         # 对t_batch内的每个三元组对，计算emb值
         for triplet, corrupt_triplet in t_batch:
             # 正确三元的三个embedding
@@ -76,7 +76,7 @@ class TransE(nn.Module):
             d_triplet = torch.norm(triplet_head + triplet_relation - triplet_tail, p=2)
             d_corrupt_triplet = torch.norm(corrupt_triplet_head + corrupt_triplet_relation - corrupt_triplet_tail, p=2)
             l = self.margin + d_triplet - d_corrupt_triplet
-            loss += F.relu(l)
+            loss.add_(F.relu(l))
         # 返回t_batch的误差    
         return loss
 
