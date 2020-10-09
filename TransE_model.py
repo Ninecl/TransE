@@ -69,9 +69,9 @@ class TransE(nn.Module):
             triplet_relation = self.rel_embeddings(triplet[1])
             triplet_tail = self.ent_embeddings(triplet[2])
             # 错误三元组的三个embedding
-            corrupt_triplet_head = self.ent_embeddings(triplet[0])
-            corrupt_triplet_relation = self.rel_embeddings(triplet[1])
-            corrupt_triplet_tail = self.ent_embeddings(triplet[2])
+            corrupt_triplet_head = self.ent_embeddings(corrupt_triplet[0])
+            corrupt_triplet_relation = self.rel_embeddings(corrupt_triplet[1])
+            corrupt_triplet_tail = self.ent_embeddings(corrupt_triplet[2])
             # 计算正确三元组与错误三元组之间的距离
             d_triplet = torch.norm(triplet_head + triplet_relation - triplet_tail, p=2)
             d_corrupt_triplet = torch.norm(corrupt_triplet_head + corrupt_triplet_relation - corrupt_triplet_tail, p=2)

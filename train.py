@@ -3,12 +3,13 @@ import torch.optim as optim
 import numpy as np
 import time
 import TransE_model
+from tqdm import tqdm
 
 
 EPOCHES = 100
 BATCH_SIZE = 4000
-LEARNING_RATE = 0.001
-DIM = 30
+LEARNING_RATE = 0.01
+DIM = 100
 MARGIN = 1.
 
 
@@ -54,6 +55,7 @@ print("Loading sucessfully. There are %d relations." % len(relation2ID))
 model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, dim=DIM ,margin=MARGIN, device=device).to(device)
 # 迭代训练
 for epoch in range(EPOCHES):
+    print("Epoch {}:\n".format(epoch))
     start_time = time.time()
     # 计算每个epoch的loss
     total_loss = 0
@@ -63,7 +65,7 @@ for epoch in range(EPOCHES):
     nbatch = int(len(train_triplets) / BATCH_SIZE) + 1
     # 设置优化器
     opt_SGD = torch.optim.SGD(model.parameters(), lr = LEARNING_RATE)
-    for i in range(nbatch):
+    for i in tqdm(range(nbatch)):
         opt_SGD.zero_grad()
         t_batch = model.corrupt(BATCH_SIZE)
         loss = model.forward(t_batch)
