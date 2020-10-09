@@ -74,9 +74,9 @@ for epoch in range(EPOCHES):
     print("Epoch {}: loss = {}, cost {}(s).".format(epoch, total_loss, end_time - start_time))
 
 PATH = './models/TransE_emb_{}.pkl'.format(time.strftime("%Y%m%d%H%M%S", time.localtime()))
-torch.save(model.state_dict(), PATH)
-f_train_log = open("./model/train_log.txt", "a")
-f_train_log.write(path + '\n')
-f_train_log.write("epoch: {}, batchsize: {}, learning_rate: {}, dim: {}, margin: {}.\n".format(EPOCHES, BATCH_SIZE, LEARNING_RATE, DIM, MARGIN))
+torch.save(model, PATH)
+f_train_log = open("./models/train_log.txt", "a")
+f_train_log.write(PATH + '\n')
+f_train_log.write("epoch: {}, batchsize: {}, learning_rate: {}, dim: {}, margin: {}\n".format(EPOCHES, BATCH_SIZE, LEARNING_RATE, DIM, MARGIN))
 
 
