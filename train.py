@@ -5,13 +5,16 @@ import time
 import TransE_model
 
 
-EPOCHES = 100
+EPOCHES = 1
 BATCH_SIZE = 4000
 LEARNING_RATE = 0.01
+DIM = 30
 
 
 # 加载GPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
 # 加载训练数据集，为ID形式
 print("Loading triplets......")
 f_train2ID = open("./FB15k/train2ID.txt", "r")
@@ -33,7 +36,7 @@ entity2ID = f_entity2ID.readlines()
 for i in range(0, len(entity2ID)):
     entity2ID[i] = entity2ID[i].split()
     entity2ID[i][1] = int(entity2ID[i][1])
-print("Loading sucessfully.\nThere are %d entities." % len(entity2ID))
+print("Loading sucessfully. There are %d entities." % len(entity2ID))
 
 # 加载所有关系
 print("Loading relations......")
@@ -43,11 +46,11 @@ relation2ID = f_relation2ID.readlines()
 for i in range(0, len(relation2ID)):
     relation2ID[i] = relation2ID[i].split()
     relation2ID[i][1] = int(relation2ID[i][1])
-print("Loading sucessfully.\nThere are %d relations." % len(relation2ID))
+print("Loading sucessfully. There are %d relations." % len(relation2ID))
 
 
 # 加载模型
-model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, margin=1, device=device).to(device)
+model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, dim=DIM ,margin=1, device=device).to(device)
 # 迭代训练
 for epoch in range(EPOCHES):
     start_time = time.time()
@@ -69,7 +72,7 @@ for epoch in range(EPOCHES):
     end_time = time.time()
     print("Epoch {}: loss = {}, cost {}(s).".format(epoch, total_loss, end_time - start_time))
 
-PATH = './TransE_emb.pth'
-torch.save(model, PATH)
+PATH = './TransE_emb.pkl'
+torch.save(model.state_dict(), PATH)
 
 
