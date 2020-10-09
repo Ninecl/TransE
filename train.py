@@ -5,10 +5,11 @@ import time
 import TransE_model
 
 
-EPOCHES = 1
+EPOCHES = 100
 BATCH_SIZE = 4000
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.001
 DIM = 30
+MARGIN = 1.
 
 
 # 加载GPU
@@ -50,7 +51,7 @@ print("Loading sucessfully. There are %d relations." % len(relation2ID))
 
 
 # 加载模型
-model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, dim=DIM ,margin=1, device=device).to(device)
+model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, dim=DIM ,margin=MARGIN, device=device).to(device)
 # 迭代训练
 for epoch in range(EPOCHES):
     start_time = time.time()
@@ -72,7 +73,10 @@ for epoch in range(EPOCHES):
     end_time = time.time()
     print("Epoch {}: loss = {}, cost {}(s).".format(epoch, total_loss, end_time - start_time))
 
-PATH = './TransE_emb.pkl'
+PATH = './models/TransE_emb_{}.pkl'.format(time.strftime("%Y%m%d%H%M%S", time.localtime()))
 torch.save(model.state_dict(), PATH)
+f_train_log = open("./model/train_log.txt", "a")
+f_train_log.write(path + '\n')
+f_train_log.write("epoch: {}, batchsize: {}, learning_rate: {}, dim: {}, margin: {}.\n".format(EPOCHES, BATCH_SIZE, LEARNING_RATE, DIM, MARGIN))
 
 
