@@ -65,13 +65,13 @@ class TransE(nn.Module):
         # 对t_batch内的每个三元组对，计算emb值
         for triplet, corrupt_triplet in t_batch:
             # 正确三元的三个embedding
-            triplet_head = self.ent_embeddings.weight.data[triplet[0]]
-            triplet_relation = self.rel_embeddings.weight.data[triplet[1]]
-            triplet_tail = self.ent_embeddings.weight.data[triplet[2]]
+            triplet_head = self.ent_embeddings.weight[triplet[0]]
+            triplet_relation = self.rel_embeddings.weight[triplet[1]]
+            triplet_tail = self.ent_embeddings.weight[triplet[2]]
             # 错误三元组的三个embedding
-            corrupt_triplet_head = self.ent_embeddings.weight.data[corrupt_triplet[0]]
-            corrupt_triplet_relation = self.rel_embeddings.weight.data[corrupt_triplet[1]]
-            corrupt_triplet_tail = self.ent_embeddings.weight.data[corrupt_triplet[2]]
+            corrupt_triplet_head = self.ent_embeddings.weight[corrupt_triplet[0]]
+            corrupt_triplet_relation = self.rel_embeddings.weight[corrupt_triplet[1]]
+            corrupt_triplet_tail = self.ent_embeddings.weight[corrupt_triplet[2]]
             # 计算正确三元组与错误三元组之间的距离
             d_triplet = torch.norm(triplet_head + triplet_relation - triplet_tail, p=2)
             d_corrupt_triplet = torch.norm(corrupt_triplet_head + corrupt_triplet_relation - corrupt_triplet_tail, p=2)
