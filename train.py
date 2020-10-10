@@ -8,8 +8,8 @@ from tqdm import tqdm
 
 EPOCHES = 100
 BATCH_SIZE = 4000
-LEARNING_RATE = 0.01
-DIM = 100
+LEARNING_RATE = 0.001
+DIM = 30
 MARGIN = 1.
 
 

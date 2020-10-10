@@ -5,7 +5,7 @@ import time
 
 # 加载模型
 print("Loading model......")
-model = torch.load("./TransE_emb.pth")
+model = torch.load("./models/TransE_emb_20201010111432.pkl")
 # 加载entity与relation的emb
 ent_emb = model.ent_embeddings
 rel_emb = model.rel_embeddings
@@ -70,4 +70,4 @@ print("MeanRank: {}".format(mean_rank))
 # 将结果输出到文件中
 f_test_result = open("./test_result.txt", "a")
 f_test_result.write(time.strftime("%Y-%m-%d %H:%M:%S\n", time.localtime()))
-f_test_result.write("Hit@1: {}\nHit@10: {}\nMeanRank: {}\n".format(hit_1, hit_10, mean_rank))
+f_test_result.write("Hit@1: {}\nHit@10: {}\nMeanRank: {}\n\n".format(hit_1, hit_10, mean_rank))
