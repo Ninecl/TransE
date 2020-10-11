@@ -2,19 +2,33 @@ import torch
 import torch.optim as optim
 import numpy as np
 import time
+import argparse
 import TransE_model
 from tqdm import tqdm
 
 
-EPOCHES = 100
-BATCH_SIZE = 4000
-LEARNING_RATE = 0.001
-DIM = 30
-MARGIN = 1.
+# 设置参数解析函数，解析传入参数
+parser = argparse.ArgumentParser()
+parser.add_argument('-e', '--epoch', type=int, default=100, help='num of epoches')
+parser.add_argument('-b', '--batchsize', type=int, default=4000, help='num of batchsize')
+parser.add_argument('-lr', '--learning_rate', type=float, default=0.01, help='num of learning_rate')
+parser.add_argument('-d', '--dim', type=int, default=30, help='num of dim')
+parser.add_argument('-m', '--margin', type=float, default=1., help='num of margin')
+parser.add_argument('-g', '--gpu_id', type=int, choices=[0, 1, 2, 3], default=0, help='num of margin')
+args = parser.parse_args()
+
+
+# 通过命令行参数定义超参数
+EPOCHES = args.epoch
+BATCH_SIZE = args.batchsize
+LEARNING_RATE = args.learning_rate
+DIM = args.dim
+MARGIN = args.margin
+GPU_ID = args.gpu_id
 
 
 # 加载GPU
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:{}".format(GPU_ID) if torch.cuda.is_available() else "cpu")
 
 
 # 加载训练数据集，为ID形式
@@ -52,15 +66,14 @@ print("Loading sucessfully. There are %d relations." % len(relation2ID))
 
 
 # 加载模型
-model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, dim=DIM ,margin=MARGIN, device=device).to(device)
+model = TransE_model.TransE(len(entity2ID), len(relation2ID), train_triplets, dim=DIM, margin=MARGIN, device=device).to(device)
 # 迭代训练
 for epoch in range(EPOCHES):
-    print("Epoch {}:\n".format(epoch))
     start_time = time.time()
     # 计算每个epoch的loss
     total_loss = 0
     # 每个epoch都除一次二范数
-    model.ent_embeddings.weight.data = model.ent_embeddings.weight.data / torch.norm(model.ent_embeddings.weight.data, p=2)
+    model.ent_embeddings.weight.data = model.ent_embeddings.weight.data / torch.norm(model.ent_embeddings.weight.data, p=2, dim=1, keepdim=True)
     # 计算一共分多少个batch
     nbatch = int(len(train_triplets) / BATCH_SIZE) + 1
     # 设置优化器
@@ -79,6 +92,6 @@ PATH = './models/TransE_emb_{}.pkl'.format(time.strftime("%Y%m%d%H%M%S", time.lo
 torch.save(model, PATH)
 f_train_log = open("./models/train_log.txt", "a")
 f_train_log.write(PATH + '\n')
-f_train_log.write("epoch: {}, batchsize: {}, learning_rate: {}, dim: {}, margin: {}\n".format(EPOCHES, BATCH_SIZE, LEARNING_RATE, DIM, MARGIN))
+f_train_log.write("epoch: {}, batchsize: {}, learning_rate: {}, dim: {}, margin: {}\n\n".format(EPOCHES, BATCH_SIZE, LEARNING_RATE, DIM, MARGIN))
 
 

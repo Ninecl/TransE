@@ -26,10 +26,10 @@ class TransE(nn.Module):
         # 初始化embedding
         emb_range = (6 / np.sqrt(dim))
         # 初始化relation
-        nn.init.uniform(self.rel_embeddings.weight.data, -emb_range, emb_range)
-        self.rel_embeddings.weight.data = self.rel_embeddings.weight.data / torch.norm(self.rel_embeddings.weight.data, p=2)
+        nn.init.uniform_(self.rel_embeddings.weight.data, -emb_range, emb_range)
+        self.rel_embeddings.weight.data = self.rel_embeddings.weight.data / torch.norm(self.rel_embeddings.weight.data, p=2, dim=1, keepdim=True)
         # 初始化entity
-        nn.init.uniform(self.ent_embeddings.weight.data, -emb_range, emb_range)
+        nn.init.uniform_(self.ent_embeddings.weight.data, -emb_range, emb_range)
     
     def corrupt(self, b):
         # 设置t_batch
@@ -61,7 +61,7 @@ class TransE(nn.Module):
     
     def forward(self, t_batch):
         # 设置loss值
-        loss = torch.FloatTensor([0.0]).to(self.device)
+        loss = torch.tensor([0.0], requires_grad=True).to(self.device)
         # 对t_batch内的每个三元组对，计算emb值
         for triplet, corrupt_triplet in t_batch:
             # 正确三元的三个embedding
@@ -75,6 +75,7 @@ class TransE(nn.Module):
             # 计算正确三元组与错误三元组之间的距离
             d_triplet = torch.norm(triplet_head + triplet_relation - triplet_tail, p=2)
             d_corrupt_triplet = torch.norm(corrupt_triplet_head + corrupt_triplet_relation - corrupt_triplet_tail, p=2)
+            l = torch.tensor([0.], requires_grad=True).to(self.device)
             l = self.margin + d_triplet - d_corrupt_triplet
             loss.add_(F.relu(l))
         # 返回t_batch的误差    

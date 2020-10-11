@@ -1,11 +1,19 @@
 import torch
 import TransE_model
 import time
+import argparse
+
+
+# # 设置参数解析函数，解析传入参数
+parser = argparse.ArgumentParser()
+parser.add_argument('-m', '--model_path', type=str, default=None, help='path of model')
+args = parser.parse_args()
+model_path = args.model_path
 
 
 # 加载模型
 print("Loading model......")
-model = torch.load("./models/TransE_emb_20201010111432.pkl")
+model = torch.load(model_path)
 # 加载entity与relation的emb
 ent_emb = model.ent_embeddings
 rel_emb = model.rel_embeddings
@@ -14,7 +22,7 @@ print("Loading sucessfully!")
 
 # 加载GPU
 print("Loading GPU......")
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = model.device
 print("Loading sucessfully!")
 
 
@@ -69,5 +77,5 @@ print("MeanRank: {}".format(mean_rank))
 
 # 将结果输出到文件中
 f_test_result = open("./test_result.txt", "a")
-f_test_result.write(time.strftime("%Y-%m-%d %H:%M:%S\n", time.localtime()))
+f_test_result.write("model: {}\n".format(model_path))
 f_test_result.write("Hit@1: {}\nHit@10: {}\nMeanRank: {}\n\n".format(hit_1, hit_10, mean_rank))
