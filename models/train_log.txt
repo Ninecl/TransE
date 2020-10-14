@@ -19,3 +19,6 @@ epoch: 100, batchsize: 4000, learning_rate: 0.05, dim: 100, margin: 1.0
 ./models/TransE_emb_20201011121456.pkl
 epoch: 100, batchsize: 4000, learning_rate: 0.05, dim: 30, margin: 1.0
 
+./models/TransE_emb_20201014060433.pkl
+epoch: 100, batchsize: 4000, learning_rate: 0.08, dim: 100, margin: 0.5
+
